@@ -7,6 +7,8 @@ defmodule EnvHelper.Mixfile do
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
+     description: description,
+     package: package,
      deps: deps]
   end
 
@@ -17,6 +19,18 @@ defmodule EnvHelper.Mixfile do
     [applications: [:logger]]
   end
 
+  defp description do
+    """
+    A simple add on to make working with environment variables slightly easier.
+    """
+  end
+  defp package do
+   [
+      maintainers: ["Paul Daigle"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/manheim/env_helper"}
+    ]
+  end
   # Dependencies can be Hex packages:
   #
   #   {:mydep, "~> 0.3.0"}
