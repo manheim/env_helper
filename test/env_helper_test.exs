@@ -2,6 +2,9 @@ defmodule TestSettings do
   import EnvHelper
   system_env(:this, "that")
   system_env(:this_gist, "bat")
+  system_env(:force_int, "4821", :string_to_integer)
+  system_env(:must_int, 5432, :string_to_integer)
+  system_env(:should_int, 5699, :string_to_integer)
 end
 
 defmodule SettingsTest do
@@ -10,10 +13,17 @@ defmodule SettingsTest do
 
   setup do
     System.put_env("THIS_GIST", "ghast")
+    System.put_env("MUST_INT", "4321")
   end
 
-  test "creates methods" do
+  test "creates methods for simple cases" do
     assert TestSettings.this == "that"
     assert TestSettings.this_gist == "ghast"
+  end
+
+  test "allows forcing binary to integer" do
+    assert TestSettings.must_int == 4321
+    assert TestSettings.force_int == 4821
+    assert TestSettings.should_int == 5699
   end
 end

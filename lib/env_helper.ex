@@ -7,4 +7,14 @@ defmodule EnvHelper do
       end
     end
   end
+
+  defmacro system_env(name, alt, :string_to_integer) do
+    env_name = Atom.to_string(name) |> String.upcase
+    quote do
+      def unquote(name)() do
+        value = System.get_env(unquote(env_name)) || unquote(alt)
+        if is_binary(value), do: String.to_integer(value), else: value
+      end
+    end
+  end
 end
