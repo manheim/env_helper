@@ -3,6 +3,7 @@
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/manheim/env_helper/master/LICENSE)
 [![Travis](https://img.shields.io/travis/manheim/env_helper.svg?maxAge=2592000&style=flat-square)](https://travis-ci.org/manheim/env_helper)
 [![Hex.pm](https://img.shields.io/hexpm/v/env_helper.svg?maxAge=2592000&style=flat-square)](https://hex.pm/packages/env_helper)
+[![Coveralls](https://img.shields.io/coveralls/manheim/env_helper.svg?maxAge=2592000&style=flat-square)](https://coveralls.io/github/manheim/env_helper)
 
 Using system variables is good practice, and env helper helps you practice it.
 
