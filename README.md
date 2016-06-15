@@ -8,7 +8,7 @@ Using system variables is good practice, and env helper helps you practice it.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+The package can be installed from hex.pm:
 
   1. Add env_helper to your list of dependencies in `mix.exs`:
 
@@ -27,4 +27,8 @@ Create a module to keep your settings in, and then call the `system_env/2` macro
 
 This maps the method `Settings.base_url` to the system environment variable `BASE_URL`, or to the default value if the environment variable is not set.
 
+Some settings might need to be integer values in your code, but will be strings when read from the environment helper. In such cases you can use the :string_to_integer flag:
 
+    system_env(:port, 9876, :string_to_integer)
+
+Which will ensure that `PORT` environment variable will be interpreted as an integer.
