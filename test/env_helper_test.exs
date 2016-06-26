@@ -5,10 +5,13 @@ defmodule TestSettings do
   system_env(:force_int, "4821", :string_to_integer)
   system_env(:must_int, 5432, :string_to_integer)
   system_env(:should_int, 5699, :string_to_integer)
+  app_env(:unset, [:env_helper, :unset], "didn't set")
+  app_env(:set, [:env_helper, :set], "didn't set")
 end
 
 defmodule SettingsTest do
   use ExUnit.Case
+  doctest EnvHelper
   require TestSettings
 
   setup do
@@ -25,5 +28,10 @@ defmodule SettingsTest do
     assert TestSettings.must_int == 4321
     assert TestSettings.force_int == 4821
     assert TestSettings.should_int == 5699
+  end
+
+  test "picks up application variables" do
+    assert TestSettings.unset == "didn't set"
+    assert TestSettings.set == "was set"
   end
 end
