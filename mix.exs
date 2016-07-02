@@ -45,7 +45,8 @@ defmodule EnvHelper.Mixfile do
   defp deps do
     [
       {:excoveralls, "~> 0.4", only: :test},
-      {:ex_doc, ">=0.0.0", only: :dev}
+      {:ex_doc, ">=0.0.0", only: :dev},
+      {:inch_ex, only: :docs}
     ]
   end
 end
