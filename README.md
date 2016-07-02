@@ -6,7 +6,7 @@
 [![Coveralls](https://img.shields.io/coveralls/manheim/env_helper.svg?maxAge=2592000&style=flat-square)](https://coveralls.io/github/manheim/env_helper)
 [![Inline docs](http://inch-ci.org/github/manheim/env_helper.svg)](http://inch-ci.org/github/manheim/env_helper)
 
-Using system variables is good practice, and env helper helps you practice it.
+Using system variables is good practice, and env helper helps you practice it. [Documentation available online](https://hexdocs.pm/env_helper/api-reference.html)
 
 ## Installation
 
@@ -20,7 +20,11 @@ The package can be installed from hex.pm:
 
 ## Usage
 
-Create a module to keep your settings in, and then call the `system_env/2` macro with the name of the environment variable you want to use as a lowercase atom, and the value you want to be the default as a string. For example:
+#### General
+
+Create a module and import `EnvHelper`, then use the `system_env` and `app_env` macros to to define functions for that module.
+
+#### system_env
 
     defmodule Settings
       import EnvHelper
@@ -34,3 +38,18 @@ Some settings might need to be integer values in your code, but will be strings 
     system_env(:port, 9876, :string_to_integer)
 
 Which will ensure that `PORT` environment variable will be interpreted as an integer.
+
+#### app_env
+
+In config/test.exs:
+
+    config :my_app, :port, 5678
+
+In settings.ex:
+
+    defmodule Settings do
+      import EnvHelper
+      app_env(:port, [:my_app, :port], 1234)
+    end
+
+Assuming that the `config/dev.exs` file does not define a   `:my_app, :port` variable, in the test environment `Settings.port` is `5678` and in dev it will be `1234`.
