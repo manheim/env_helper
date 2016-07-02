@@ -31,6 +31,7 @@ defmodule SettingsTest do
   end
 
   test "picks up application variables" do
+    Application.put_env :env_helper, :set, "was set"
     assert TestSettings.unset == "didn't set"
     assert TestSettings.set == "was set"
   end

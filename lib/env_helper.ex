@@ -4,22 +4,29 @@ defmodule EnvHelper do
   """
 
   @doc """
-  creates a method `name/0` which returns either alt or the environment variable set for the upcase version `name`.
-  Expects `name` to be an atom, `value` can be anything.
+  creates a method `name/0` which returns either `alt` or the environment variable set for the upcase version `name`.
 
-  ##Examples
+  ## Paramenters
+  * `name` :: atom
 
-    iex> System.put_env("SET_VALUE", "aloha")
-    iex> defmodule UnsetModule do
-    iex>   import EnvHelper
-    iex>   system_env(:novalue, "goodbye")
-    iex>   system_env(:set_value, "hello")
-    iex>   system_env(:int_value, 224)
-    iex>   end
-    iex> UnsetModule.novalue
-    "goodbye"
-    iex> UnsetModule.set_value
-    "aloha"
+     The name of a system environment variable, downcase, as an atom
+  * `alt` :: any
+
+     The value used if the system variable is not set.
+
+  ## Example   
+
+      defmodule EnvSets do
+        import EnvHelper
+        system_env(:app_url, "localhost:2000")
+      end
+      > EnvSets.app_url
+      "localhost:2000"
+      > System.put_env("APP_URL", "app.io")
+      :ok
+      > EnvSets.app_url
+      "app.io"
+
 
   """
   defmacro system_env(name, alt) do
@@ -32,8 +39,38 @@ defmodule EnvHelper do
   end
 
   @doc """
-  Same as system_env/2, but takes the argument `:string_to_integer` to ensure that the environment variable is converted to an integer value.
+  creates a method `name/0` which returns either `alt` or the environment variable set for the upcase version `name`, cast to an integer.
+
+  ## Paramenters
+  * `name` :: atom
+
+     The name of a system environment variable, downcase, as an atom
+  * `alt` :: any
+
+     The value used if the system variable is not set.
+  * :string_to_integer 
+
+    forces the returned value to be an integer.
+
+  ## Example   
+
+      defmodule EnvSets do
+        import EnvHelper
+        system_env(:app_port, 2000, :string_to_integer)
+      end
+      > EnvSets.app_port
+      2000
+      > System.put_env("APP_PORT", "2340")
+      :ok
+      > EnvSets.app_port
+      2340
+      > System.put_env("APP_PORT", 2360)
+      :ok
+      > EnvSets.app_url
+      2360
+
   """
+  @spec system_env(atom, any, :string_to_integer) :: integer
   defmacro system_env(name, alt, :string_to_integer) do
     env_name = Atom.to_string(name) |> String.upcase
     quote do
@@ -45,15 +82,23 @@ defmodule EnvHelper do
   end
 
   @doc """
-  Takes the simplest case of an application variable, one where the variable is set by application name and key only. May not handle more complex cases as expected.
+  defines a method `name/0` which returns either the application variable for `appname[key]` or the provided `alt` value.
 
-  given a config.exs file such as:
+  Works best in simple cases, such as `config :appname, :key, value`
 
-  `config :envhelper, :key, "value"`
-
-  Then we would expect to use `EnvHelper.app_env(:value, [:envhelper, :key], "set")` to create a module function `Module.value/0` that returned "value"
-
-  See tests for better details.
+  ## Example
+      
+      defmodule AppEnvs do
+        import EnvHelper
+        app_env(:port, [:appname, :port], 1234)
+      end
+      
+      > AppEnvs.port
+      1234
+      > Application.put_env(:appname, :port, 5678)
+      :ok
+      > AppEnvs.app_port
+      5678
 
   """
   defmacro app_env(name, [appname, key], alt) do
