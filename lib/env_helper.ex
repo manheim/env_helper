@@ -97,7 +97,7 @@ defmodule EnvHelper do
       1234
       > Application.put_env(:appname, :port, 5678)
       :ok
-      > AppEnvs.app_port
+      > AppEnvs.port
       5678
 
   """
