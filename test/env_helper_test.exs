@@ -7,6 +7,11 @@ defmodule TestSettings do
   system_env(:should_int, 5699, :string_to_integer)
   app_env(:unset, [:env_helper, :unset], "didn't set")
   app_env(:set, [:env_helper, :set], "didn't set")
+
+  defmodule Section do
+    app_env(:setvar, [:env_helper, :section, :setvar], "didn't set")
+    app_env(:secret, [:env_helper, :section, :secret], "default secret")
+  end
 end
 
 defmodule SettingsTest do
@@ -34,5 +39,9 @@ defmodule SettingsTest do
     Application.put_env :env_helper, :set, "was set"
     assert TestSettings.unset == "didn't set"
     assert TestSettings.set == "was set"
+
+    Application.put_env :env_helper, :section, [setvar: "was set"]
+    assert TestSettings.Section.secret == "default secret"
+    assert TestSettings.Section.setvar == "was set"
   end
 end

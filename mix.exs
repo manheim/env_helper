@@ -3,7 +3,7 @@ defmodule EnvHelper.Mixfile do
 
   def project do
     [app: :env_helper,
-     version: "0.0.3",
+     version: "0.0.4",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -46,7 +46,7 @@ defmodule EnvHelper.Mixfile do
     [
       {:excoveralls, "~> 0.4", only: :test},
       {:ex_doc, ">=0.0.0", only: :dev},
-      {:inch_ex, only: :docs}
+      {:inch_ex, ">=0.0.0", only: :docs}
     ]
   end
 end

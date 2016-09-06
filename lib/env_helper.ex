@@ -14,7 +14,7 @@ defmodule EnvHelper do
 
      The value used if the system variable is not set.
 
-  ## Example   
+  ## Example
 
       defmodule EnvSets do
         import EnvHelper
@@ -48,11 +48,11 @@ defmodule EnvHelper do
   * `alt` :: any
 
      The value used if the system variable is not set.
-  * :string_to_integer 
+  * :string_to_integer
 
     forces the returned value to be an integer.
 
-  ## Example   
+  ## Example
 
       defmodule EnvSets do
         import EnvHelper
@@ -86,13 +86,13 @@ defmodule EnvHelper do
 
   Works best in simple cases, such as `config :appname, :key, value`
 
-  ## Example
-      
+  ## Example (simple app variable)
+
       defmodule AppEnvs do
         import EnvHelper
         app_env(:port, [:appname, :port], 1234)
       end
-      
+
       > AppEnvs.port
       1234
       > Application.put_env(:appname, :port, 5678)
@@ -100,11 +100,39 @@ defmodule EnvHelper do
       > AppEnvs.port
       5678
 
+  ## Example (nested app variable)
+
+      defmodule AppEnvs do
+        import EnvHelper
+
+        defmodule Section do
+          app_env(:secret, [:appname, :section, :secret], "default secret")
+        end
+      end
+
+      > AppEnvs.Section.secret
+      "default secret"
+      > Application.puts_env(:appname, :section, [secret: "my super secret"])
+      :ok
+      > AppEnvs.Section.secret
+      "my super secret"
   """
   defmacro app_env(name, [appname, key], alt) do
     quote do
       def unquote(name)() do
         Application.get_env(unquote(appname), unquote(key)) || unquote alt
+      end
+    end
+  end
+
+  defmacro app_env(name, [appname, key, subkey], alt) do
+    quote do
+      def unquote(name)() do
+        opts = Application.get_env(unquote(appname), unquote(key)) || []
+        case List.keyfind(opts, unquote(subkey), 0) do
+          {_, value} -> value
+          nil -> unquote alt
+        end
       end
     end
   end
