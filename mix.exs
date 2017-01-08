@@ -3,15 +3,15 @@ defmodule EnvHelper.Mixfile do
 
   def project do
     [app: :env_helper,
-     version: "0.0.4",
+     version: "0.0.5",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     description: description,
+     description: description(),
      test_coverage: [tool: ExCoveralls],
      preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test],
-     package: package,
-     deps: deps]
+     package: package(),
+     deps: deps()]
   end
 
   # Configuration for the OTP application
