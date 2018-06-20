@@ -5,6 +5,12 @@ defmodule TestSettings do
   system_env(:force_int, "4821", :string_to_integer)
   system_env(:must_int, 5432, :string_to_integer)
   system_env(:should_int, 5699, :string_to_integer)
+  system_env(:force_bool_true, "true", :string_to_boolean)
+  system_env(:force_bool_false, "false", :string_to_boolean)
+  system_env(:force_bool_nil, "nil", :string_to_boolean)
+  system_env(:force_bool_empty, "", :string_to_boolean)
+  system_env(:force_bool_words, "not a boolean", :string_to_boolean)
+  system_env(:must_bool, false, :string_to_boolean)
   app_env(:unset, [:env_helper, :unset], "didn't set")
   app_env(:set, [:env_helper, :set], "didn't set")
 
@@ -22,6 +28,7 @@ defmodule SettingsTest do
   setup do
     System.put_env("THIS_GIST", "ghast")
     System.put_env("MUST_INT", "4321")
+    System.put_env("MUST_BOOL", "true")
   end
 
   test "creates methods for simple cases" do
@@ -33,6 +40,15 @@ defmodule SettingsTest do
     assert TestSettings.must_int == 4321
     assert TestSettings.force_int == 4821
     assert TestSettings.should_int == 5699
+  end
+
+  test "allows forcing binary to boolean" do
+    assert TestSettings.force_bool_true == true
+    assert TestSettings.force_bool_false == false
+    assert TestSettings.force_bool_nil == false
+    assert TestSettings.force_bool_empty == false
+    assert TestSettings.force_bool_words == true
+    assert TestSettings.must_bool == true
   end
 
   test "picks up application variables" do
