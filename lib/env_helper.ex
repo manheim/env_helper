@@ -120,7 +120,7 @@ defmodule EnvHelper do
       def unquote(name)() do
         value = System.get_env(unquote(env_name)) || unquote(alt)
         if is_binary(value) do
-          String.downcase(value) not in ["", "false", "nil"]
+          not String.downcase(value) in ["", "false", "nil"]
         else
           value && true
         end
