@@ -82,6 +82,53 @@ defmodule EnvHelper do
   end
 
   @doc """
+  creates a method `name/0` which returns either `alt` or the environment variable set for the upcase version `name`, cast to a boolean.
+
+  ## Paramenters
+  * `name` :: atom
+
+     The name of a system environment variable, downcase, as an atom
+  * `alt` :: any
+
+     The value used if the system variable is not set.
+  * :string_to_boolean
+
+    forces the returned value to be a boolean.
+
+  ## Example
+
+      defmodule EnvSets do
+        import EnvHelper
+        system_env(:auto_connect, false, :string_to_boolean)
+      end
+      > EnvSets.auto_connect
+      false
+      > System.put_env("AUTO_CONNECT", "true")
+      :ok
+      > EnvSets.auto_connect
+      true
+      > System.put_env("AUTO_CONNECT", "false")
+      :ok
+      > EnvSets.auto_connect
+      false
+
+  """
+  @spec system_env(atom, any, :string_to_boolean) :: boolean
+  defmacro system_env(name, alt, :string_to_boolean) do
+    env_name = Atom.to_string(name) |> String.upcase
+    quote do
+      def unquote(name)() do
+        value = System.get_env(unquote(env_name)) || unquote(alt)
+        if is_binary(value) do
+          not String.downcase(value) in ["", "false", "nil"]
+        else
+          value && true
+        end
+      end
+    end
+  end
+
+  @doc """
   defines a method `name/0` which returns either the application variable for `appname[key]` or the provided `alt` value.
 
   Works best in simple cases, such as `config :appname, :key, value`
