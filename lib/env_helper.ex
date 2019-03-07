@@ -20,17 +20,19 @@ defmodule EnvHelper do
         import EnvHelper
         system_env(:app_url, "localhost:2000")
       end
+
       > EnvSets.app_url
       "localhost:2000"
+
       > System.put_env("APP_URL", "app.io")
       :ok
+
       > EnvSets.app_url
       "app.io"
-
-
   """
   defmacro system_env(name, alt) do
-    env_name = Atom.to_string(name) |> String.upcase
+    env_name = Atom.to_string(name) |> String.upcase()
+
     quote do
       def unquote(name)() do
         System.get_env(unquote(env_name)) || unquote(alt)
@@ -72,7 +74,8 @@ defmodule EnvHelper do
   """
   @spec system_env(atom, any, :string_to_integer) :: integer
   defmacro system_env(name, alt, :string_to_integer) do
-    env_name = Atom.to_string(name) |> String.upcase
+    env_name = Atom.to_string(name) |> String.upcase()
+
     quote do
       def unquote(name)() do
         value = System.get_env(unquote(env_name)) || unquote(alt)
@@ -115,12 +118,14 @@ defmodule EnvHelper do
   """
   @spec system_env(atom, any, :string_to_boolean) :: boolean
   defmacro system_env(name, alt, :string_to_boolean) do
-    env_name = Atom.to_string(name) |> String.upcase
+    env_name = Atom.to_string(name) |> String.upcase()
+
     quote do
       def unquote(name)() do
         value = System.get_env(unquote(env_name)) || unquote(alt)
+
         if is_binary(value) do
-          not String.downcase(value) in ["", "false", "nil"]
+          String.downcase(value) not in ["", "false", "nil"]
         else
           value && true
         end
@@ -167,7 +172,7 @@ defmodule EnvHelper do
   defmacro app_env(name, [appname, key], alt) do
     quote do
       def unquote(name)() do
-        Application.get_env(unquote(appname), unquote(key)) || unquote alt
+        Application.get_env(unquote(appname), unquote(key)) || unquote(alt)
       end
     end
   end
@@ -176,9 +181,10 @@ defmodule EnvHelper do
     quote do
       def unquote(name)() do
         opts = Application.get_env(unquote(appname), unquote(key)) || []
+
         case List.keyfind(opts, unquote(subkey), 0) do
           {_, value} -> value
-          nil -> unquote alt
+          nil -> unquote(alt)
         end
       end
     end
