@@ -1,1 +1,0 @@
-sidebarNodes={"exceptions":[],"extras":[{"id":"api-reference","title":"API Reference","headers":[]}],"modules":[{"id":"EnvHelper","title":"EnvHelper","macros":[{"id":"app_env/3","anchor":"app_env/3"},{"id":"system_env/2","anchor":"system_env/2"},{"id":"system_env/3","anchor":"system_env/3"}]}],"protocols":[]}
