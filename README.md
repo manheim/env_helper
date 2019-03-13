@@ -14,9 +14,11 @@ The package can be installed from hex.pm:
 
   1. Add env_helper to your list of dependencies in `mix.exs`:
 
-        def deps do
-          [{:env_helper, "~> 0.0.1"}]
-        end
+ ```elixir
+  def deps do
+    [{:env_helper, "~> 0.1.0"}]
+  end
+```
 
 ## Usage
 
@@ -26,16 +28,20 @@ Create a module and import `EnvHelper`, then use the `system_env` and `app_env` 
 
 #### system_env
 
-    defmodule Settings
-      import EnvHelper
-      system_env(:base_url, "localhost:9000")
-    end
+```elixir
+defmodule Settings do
+  import EnvHelper
+  system_env(:base_url, "localhost:9000")
+end
+```
 
 This maps the method `Settings.base_url` to the system environment variable `BASE_URL`, or to the default value if the environment variable is not set.
 
-Some settings might need to be integer values in your code, but will be strings when read from the environment helper. In such cases you can use the :string_to_integer flag:
+Some settings might need to be integer values in your code, but will be strings when read from the environment helper. In such cases you can use the `:string_to_integer` flag:
 
-    system_env(:port, 9876, :string_to_integer)
+```elixir
+system_env(:port, 9876, :string_to_integer)
+```
 
 Which will ensure that `PORT` environment variable will be interpreted as an integer.
 
@@ -43,13 +49,17 @@ Which will ensure that `PORT` environment variable will be interpreted as an int
 
 In config/test.exs:
 
-    config :my_app, :port, 5678
+```elixir
+config :my_app, :port, 5678
+ ```
 
 In settings.ex:
 
-    defmodule Settings do
-      import EnvHelper
-      app_env(:port, [:my_app, :port], 1234)
-    end
+```elixir
+defmodule Settings do
+  import EnvHelper
+  app_env(:port, [:my_app, :port], 1234)
+end
+```
 
 Assuming that the `config/dev.exs` file does not define a   `:my_app, :port` variable, in the test environment `Settings.port` is `5678` and in dev it will be `1234`.
