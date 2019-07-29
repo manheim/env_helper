@@ -134,6 +134,57 @@ defmodule EnvHelper do
   end
 
   @doc """
+  creates a method `name/0` which returns either `alt` or the environment variable set for the upcase version `name`, cast to a List.
+
+  ## Paramenters
+  * `name` :: atom
+
+     The name of a system environment variable, downcase, as an atom
+  * `alt` :: any
+
+     The value used if the system variable is not set.
+  * :string_to_list
+
+    forces the returned value to be a list.
+
+  ## Example
+
+      defmodule EnvSets do
+        import EnvHelper
+        system_env(:destination_urls, "url_one,url_two", :string_to_list)
+      end
+      > EnvSets.destination_urls
+      ["url_one", "url_two"]
+      > System.put_env("DESTINATION_URLS", "url_three,url_four")
+      :ok
+      > EnvSets.destination_urls
+      ["url_three", "url_four"]
+      > System.put_env("AUTO_CONNECT", "url_five")
+      :ok
+      > EnvSets.destination_urls
+      ["url_five"]
+
+  """
+  @spec system_env(atom, any, :string_to_list) :: list()
+  defmacro system_env(name, alt, :string_to_list) do
+    env_name = Atom.to_string(name) |> String.upcase()
+
+    quote do
+      def unquote(name)() do
+        value = System.get_env(unquote(env_name)) || unquote(alt)
+
+        if is_binary(value) do
+          value
+          |> String.split(",")
+          |> Enum.map(&String.trim/1)
+        else
+          value
+        end
+      end
+    end
+  end
+
+  @doc """
   defines a method `name/0` which returns either the application variable for `appname[key]` or the provided `alt` value.
 
   Works best in simple cases, such as `config :appname, :key, value`
