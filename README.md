@@ -16,7 +16,7 @@ The package can be installed from hex.pm:
 
  ```elixir
   def deps do
-    [{:env_helper, "~> 0.1.0"}]
+    [{:env_helper, "~> 0.2.0"}]
   end
 ```
 
