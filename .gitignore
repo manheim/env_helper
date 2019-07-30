@@ -7,4 +7,5 @@ erl_crash.dump
 *.ez
 *.swp
 *.swo
+*.tar
 .tool-versions

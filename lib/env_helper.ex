@@ -71,20 +71,6 @@ defmodule EnvHelper do
       > EnvSets.app_url
       2360
 
-  """
-  @spec system_env(atom, any, :string_to_integer) :: integer
-  defmacro system_env(name, alt, :string_to_integer) do
-    env_name = Atom.to_string(name) |> String.upcase()
-
-    quote do
-      def unquote(name)() do
-        value = System.get_env(unquote(env_name)) || unquote(alt)
-        if is_binary(value), do: String.to_integer(value), else: value
-      end
-    end
-  end
-
-  @doc """
   creates a method `name/0` which returns either `alt` or the environment variable set for the upcase version `name`, cast to a boolean.
 
   ## Paramenters
@@ -115,25 +101,6 @@ defmodule EnvHelper do
       > EnvSets.auto_connect
       false
 
-  """
-  @spec system_env(atom, any, :string_to_boolean) :: boolean
-  defmacro system_env(name, alt, :string_to_boolean) do
-    env_name = Atom.to_string(name) |> String.upcase()
-
-    quote do
-      def unquote(name)() do
-        value = System.get_env(unquote(env_name)) || unquote(alt)
-
-        if is_binary(value) do
-          String.downcase(value) not in ["", "false", "nil"]
-        else
-          value && true
-        end
-      end
-    end
-  end
-
-  @doc """
   creates a method `name/0` which returns either `alt` or the environment variable set for the upcase version `name`, cast to a List.
 
   ## Paramenters
@@ -165,7 +132,34 @@ defmodule EnvHelper do
       ["url_five"]
 
   """
+  @spec system_env(atom, any, :string_to_integer) :: integer
+  @spec system_env(atom, any, :string_to_boolean) :: boolean
   @spec system_env(atom, any, :string_to_list) :: list()
+  defmacro system_env(name, alt, :string_to_integer) do
+    env_name = Atom.to_string(name) |> String.upcase()
+
+    quote do
+      def unquote(name)() do
+        value = System.get_env(unquote(env_name)) || unquote(alt)
+        if is_binary(value), do: String.to_integer(value), else: value
+      end
+    end
+  end
+  defmacro system_env(name, alt, :string_to_boolean) do
+    env_name = Atom.to_string(name) |> String.upcase()
+
+    quote do
+      def unquote(name)() do
+        value = System.get_env(unquote(env_name)) || unquote(alt)
+
+        if is_binary(value) do
+          String.downcase(value) not in ["", "false", "nil"]
+        else
+          value && true
+        end
+      end
+    end
+  end
   defmacro system_env(name, alt, :string_to_list) do
     env_name = Atom.to_string(name) |> String.upcase()
 
