@@ -126,15 +126,42 @@ defmodule EnvHelper do
       :ok
       > EnvSets.destination_urls
       ["url_three", "url_four"]
-      > System.put_env("AUTO_CONNECT", "url_five")
+      > System.put_env("DESTINATION_URLS", "url_five")
       :ok
       > EnvSets.destination_urls
       ["url_five"]
+
+  creates a method `name/0` which returns either `alt` or the environment variable set for the upcase version `name`, cast to a charlist.
+
+  ## Paramenters
+  * `name` :: atom
+
+     The name of a system environment variable, downcase, as an atom
+  * `alt` :: any
+
+     The value used if the system variable is not set.
+  * :string_to_charlist
+
+    forces the returned value to be a charlist.
+
+  ## Example
+
+      defmodule EnvSets do
+        import EnvHelper
+        system_env(:query, 'select * from table', :string_to_charlist)
+      end
+      > EnvSets.query()
+      'select * from table'
+      > System.put_env("QUERY", "select count(*) from table")
+      :ok
+      > EnvSets.query()
+      'select count(*) from table'
 
   """
   @spec system_env(atom, any, :string_to_integer) :: integer
   @spec system_env(atom, any, :string_to_boolean) :: boolean
   @spec system_env(atom, any, :string_to_list) :: list()
+  @spec system_env(atom, any, :string_to_charlist) :: charlist()
   defmacro system_env(name, alt, :string_to_integer) do
     env_name = Atom.to_string(name) |> String.upcase()
 
@@ -174,6 +201,16 @@ defmodule EnvHelper do
         else
           value
         end
+      end
+    end
+  end
+  defmacro system_env(name, alt, :string_to_charlist) do
+    env_name = Atom.to_string(name) |> String.upcase()
+
+    quote do
+      def unquote(name)() do
+        value = System.get_env(unquote(env_name)) || unquote(alt)
+        if is_binary(value), do: String.to_charlist(value), else: value
       end
     end
   end
